@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import * as z from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { toast } from 'react-hot-toast';
+import axios from "axios";
 
 
 
@@ -17,6 +20,8 @@ const formSchema = z.object({
 
 
 const StoreModal = () => {
+    const [loading, setLoading] = useState(false);
+
     const storeModalIsOpen = UseStoreModal(state => state.isOpen);
     const storeModalonClose = UseStoreModal(state => state.onClose);
 
@@ -28,8 +33,34 @@ const StoreModal = () => {
     });
 
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        try {
+            setLoading(true);
+            const response = await fetch('/api/stores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if(!response.ok) {
+                toast.error('Network response not ok')
+                throw new Error('Network response was not ok');
+            }
+            
+            const responseData = await response.json();
+
+            toast.success('Store created');
+            window.location.assign(`/${responseData}`)
+
+            // console.log(responseData);
+
+        } catch(error) {
+            toast.error('Something went wrong');
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
@@ -50,14 +81,14 @@ const StoreModal = () => {
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder='E-Commerce' {...field} />
+                                        <Input disabled={loading} placeholder='E-Commerce' {...field} />
                                     </FormControl>
                                     <FormMessage errors={form.formState.errors} name='name' />
                                 </FormItem>
                             )} />
                             <div className='pt-6 space-x-2 flex items-center justify-end w-full'>
-                                <Button variant='outline' onClick={storeModalonClose}>Cancel</Button>
-                                <Button type='submit'>Continue</Button>
+                                <Button disabled={loading} variant='outline' onClick={storeModalonClose}>Cancel</Button>
+                                <Button disabled={loading} type='submit'>Continue</Button>
                             </div>
                         </form>
                     </Form>
