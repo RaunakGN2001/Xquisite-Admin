@@ -19,12 +19,13 @@ import useOrigin from "@/hooks/use-origin";
 
 
 const formSchema = z.object({
-    name: z.string().min(1),
+    label: z.string().min(1),
+    imageUrl: z.string().min(1),
 });
 
  
 
-const SettingsForm = ({ initialData }) => {
+const BillboardForm = ({ initialData }) => {
 
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false); 
@@ -33,9 +34,19 @@ const SettingsForm = ({ initialData }) => {
     const origin = useOrigin();
 
 
+    const title = initialData ? 'Edit billboard' : 'Create billboard';
+    const description = initialData ? 'Edit a billboard' : 'Add a new billboard';
+    const toastMessage = initialData ? 'Billboard updated.' : 'Billboard created.';
+    const action = initialData ? 'Save changes' : 'Create';
+
+
+
     const form = useForm({
         resolver: zodResolver(formSchema),
-        defaultValues: initialData
+        defaultValues: initialData || {
+            label: '',
+            imageUrl: ''
+        }
     })
  
     const onSubmit = async (data) => {
@@ -60,7 +71,7 @@ const SettingsForm = ({ initialData }) => {
 
             router.refresh();
 
-            toast.success('Store updated');
+            toast.success({toastMessage});
 
         } catch(error) {
             toast.error('Something went wrong');
@@ -97,10 +108,12 @@ const SettingsForm = ({ initialData }) => {
         <>  
             <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={onDelete} loading={loading} />
             <div className='flex items-center justify-between'>
-                <Heading title='Settings' description='Manage store preferences' />
-                <Button variant='destructive' size='sm' onClick={() => {setOpen(true)}}>
-                    <Trash className='h-4 w-4' />
-                </Button>
+                <Heading title={title} description={description} />
+                {initialData &&
+                    <Button variant='destructive' size='sm' onClick={() => {setOpen(true)}}>
+                        <Trash className='h-4 w-4' />
+                    </Button>
+                }
             </div>
             <Separator />
             <Form {...form}>
@@ -108,23 +121,22 @@ const SettingsForm = ({ initialData }) => {
                     <div className='grid grid-cols-3 gap-8'>
                         <FormField control={form.control} name='name' render={( { field } ) => (
                             <FormItem>
-                                <FormLabel>Name</FormLabel>
+                                <FormLabel>Label</FormLabel>
                                 <FormControl>
-                                    <Input disabled={loading} placeholder='Store name' {...field} />
+                                    <Input disabled={loading} placeholder='Billboard label ' {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                     </div>
                     <Button disabled={loading} className='ml-auto' type='submit'>
-                        Save changes
+                        {action}
                     </Button>
                  </form>
             </Form>
             <Separator />
-            <APIAlert title='NEXT_PUBLIC_API_URL' description={`${origin}/api/${params.storeId}`} variant='public' />
         </>
     );
 }
 
-export default SettingsForm;
+export default BillboardForm;

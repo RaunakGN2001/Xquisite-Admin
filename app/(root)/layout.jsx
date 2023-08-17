@@ -10,6 +10,9 @@ export default async function SetupLayout({children}) {
         redirect('/sign-in');
     }
 
+
+
+
     const store = await prisma.store.findFirst({
         where: {
             userId
