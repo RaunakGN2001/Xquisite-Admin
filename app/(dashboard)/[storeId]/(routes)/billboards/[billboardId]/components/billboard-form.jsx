@@ -15,6 +15,7 @@ import { useParams, useRouter } from "next/navigation";
 import AlertModal from "@/components/modals/alert-modal";
 import APIAlert from "@/components/ui/api-alert";
 import useOrigin from "@/hooks/use-origin";
+import ImageUpload from "@/components/ui/image-upload";
 
 
 
@@ -50,17 +51,29 @@ const BillboardForm = ({ initialData }) => {
     })
  
     const onSubmit = async (data) => {
-        console.log(data);
+        // console.log(data);
 
         try {
             setLoading(true);
-            const response = await fetch(`/api/stores/${params.storeId}`, {
-                'method': 'PATCH',
-                'headers': {
-                    'Content-type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
+            if(initialData) {
+                const response = await fetch(`/api/${params.storeId}/billboards/${params.billboardId}`, {
+                    'method': 'PATCH',
+                    'headers': {
+                        'Content-type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+            }
+            else {
+                const response = await fetch(`/api/${params.storeId}/billboards`, {
+                    'method': 'POST',
+                    'headers': {
+                        'Content-type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+            }
+            
 
             if(!response.ok) {
                 toast.error('Network response not ok');
@@ -71,7 +84,7 @@ const BillboardForm = ({ initialData }) => {
 
             router.refresh();
 
-            toast.success({toastMessage});
+            toast.success(toastMessage);
 
         } catch(error) {
             toast.error('Something went wrong');
@@ -84,7 +97,7 @@ const BillboardForm = ({ initialData }) => {
     const onDelete = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`/api/stores/${params.storeId}`, {
+            const response = await fetch(`/api/${params.storeId}/billboards/${params.billboardId}`, {
                 'method': 'DELETE',
                 'headers': {
                     'Content-type': 'application/json',
@@ -93,11 +106,11 @@ const BillboardForm = ({ initialData }) => {
 
             router.refresh();
             router.push('/');
-            toast.success('Store deleted');
+            toast.success('Billboard deleted');
 
 
         } catch(error) {
-            toast.error('Make sure you removed all products and categories first.');
+            toast.error('Make sure you removed all categories using this billboard first');
         } finally {
             setLoading(false);
             setOpen(false);
@@ -118,6 +131,17 @@ const BillboardForm = ({ initialData }) => {
             <Separator />
             <Form {...form}>
                  <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 w-full'>
+                    
+                        <FormField control={form.control} name='imageUrl' render={( { field } ) => (
+                            <FormItem>
+                                <FormLabel>Background image</FormLabel>
+                                <FormControl>
+                                    <ImageUpload value={field.value ? [field.value] : []} disabled={loading} onChange={(url) => field.onChange(url)} onRemove={() => field.onChange("")}/>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        
                     <div className='grid grid-cols-3 gap-8'>
                         <FormField control={form.control} name='name' render={( { field } ) => (
                             <FormItem>
