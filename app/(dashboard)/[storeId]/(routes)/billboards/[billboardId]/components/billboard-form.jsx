@@ -51,10 +51,12 @@ const BillboardForm = ({ initialData }) => {
     })
  
     const onSubmit = async (data) => {
-        // console.log(data);
+
+
 
         try {
             setLoading(true);
+
             if(initialData) {
                 const response = await fetch(`/api/${params.storeId}/billboards/${params.billboardId}`, {
                     'method': 'PATCH',
@@ -63,6 +65,20 @@ const BillboardForm = ({ initialData }) => {
                     },
                     body: JSON.stringify(data),
                 })
+
+                // console.log('PATCH -----', response);
+
+                if(!response.ok) {
+                    toast.error('Network response not ok');
+                    throw new Error('Network response was not ok');
+                }
+
+                router.refresh();
+                router.push(`/${params.storeId}/billboards`);
+
+                toast.success(toastMessage);
+
+
             }
             else {
                 const response = await fetch(`/api/${params.storeId}/billboards`, {
@@ -72,19 +88,21 @@ const BillboardForm = ({ initialData }) => {
                     },
                     body: JSON.stringify(data),
                 })
+
+
+                // console.log('POST -----', response);
+
+                if(!response.ok) {
+                    toast.error('Network response not ok');
+                    throw new Error('Network response was not ok');
+                }
+
+                router.refresh();
+                router.push(`/${params.storeId}/billboards`);
+
+                toast.success(toastMessage);
             }
             
-
-            if(!response.ok) {
-                toast.error('Network response not ok');
-                throw new Error('Network response was not ok');
-            }
-
-
-
-            router.refresh();
-
-            toast.success(toastMessage);
 
         } catch(error) {
             toast.error('Something went wrong');
@@ -105,7 +123,7 @@ const BillboardForm = ({ initialData }) => {
             });
 
             router.refresh();
-            router.push('/');
+            router.push(`/${params.storeId}/billboards`);
             toast.success('Billboard deleted');
 
 
@@ -131,7 +149,6 @@ const BillboardForm = ({ initialData }) => {
             <Separator />
             <Form {...form}>
                  <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8 w-full'>
-                    
                         <FormField control={form.control} name='imageUrl' render={( { field } ) => (
                             <FormItem>
                                 <FormLabel>Background image</FormLabel>
@@ -143,11 +160,11 @@ const BillboardForm = ({ initialData }) => {
                         )} />
                         
                     <div className='grid grid-cols-3 gap-8'>
-                        <FormField control={form.control} name='name' render={( { field } ) => (
+                        <FormField control={form.control} name='label' render={( { field } ) => (
                             <FormItem>
                                 <FormLabel>Label</FormLabel>
                                 <FormControl>
-                                    <Input disabled={loading} placeholder='Billboard label ' {...field} />
+                                    <Input disabled={loading} placeholder='Billboard label' {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -158,7 +175,6 @@ const BillboardForm = ({ initialData }) => {
                     </Button>
                  </form>
             </Form>
-            <Separator />
         </>
     );
 }
