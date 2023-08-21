@@ -40,7 +40,7 @@ export async function POST(request, { params }) {
         }
 
 
-        const size = await prisma.size.create({
+        const color = await prisma.color.create({
             data: {
                 name,
                 value,
@@ -48,11 +48,11 @@ export async function POST(request, { params }) {
             }
         }); 
 
-        return NextResponse.json(size);
+        return NextResponse.json(color);
 
 
     } catch(error) {
-        console.log('[SIZES_POST]', error);
+        console.log('[COLORS_POST]', error);
         return new NextResponse("Internal Error", { status: 500});
     }
 }
@@ -67,17 +67,17 @@ export async function GET(request, { params }) {
         }
 
 
-        const sizes = await prisma.size.findMany({
+        const colors = await prisma.color.findMany({
             where: {
                 storeId: params.storeId
             }
         }); 
 
-        return NextResponse.json(sizes);
+        return NextResponse.json(colors);
 
 
     } catch(error) {
-        console.log('[SIZES_GET]', error);
+        console.log('[COLORS_GET]', error);
         return new NextResponse("Internal Error", { status: 500});
     }
 }

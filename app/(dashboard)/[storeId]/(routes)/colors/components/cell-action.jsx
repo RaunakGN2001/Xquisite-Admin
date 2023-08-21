@@ -24,14 +24,14 @@ const CellAction = ({ data }) => {
 
     const onCopy = (id) => {
         navigator.clipboard.writeText(id);
-        toast.success('Size Id copied to the clipboard');
+        toast.success('Color Id copied to the clipboard');
     }
 
 
     const onDelete = async (id) => {
         try {
             setLoading(true);
-            const response = await fetch(`/api/${params.storeId}/sizes/${id}`, {
+            const response = await fetch(`/api/${params.storeId}/colors/${id}`, {
                 'method': 'DELETE',
                 'headers': {
                     'Content-type': 'application/json',
@@ -39,11 +39,11 @@ const CellAction = ({ data }) => {
             });
 
             router.refresh();
-            toast.success('Size deleted');
+            toast.success('Color deleted');
 
 
         } catch (error) {
-            toast.error('Make sure you removed all products using this size first');
+            toast.error('Make sure you removed all products using this color first');
         } finally {
             setLoading(false);
             setOpen(false);
@@ -68,7 +68,7 @@ const CellAction = ({ data }) => {
                         <Copy className='mr-2 h-4 w-4' />
                         Copy Id
                     </DropdownMenuItem>
-                    <DropdownMenuItem className='cursor-pointer' onClick={() => router.push(`/${params.storeId}/sizes/${data.id}`)}>
+                    <DropdownMenuItem className='cursor-pointer' onClick={() => router.push(`/${params.storeId}/colors/${data.id}`)}>
                         <Edit className='mr-2 h-4 w-4' />
                         Update
                     </DropdownMenuItem>
