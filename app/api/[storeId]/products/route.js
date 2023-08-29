@@ -92,7 +92,7 @@ export async function POST(request, { params }) {
 export async function GET(request, { params }) {
     try {
 
-        const { searchParams } = new URL(req.url);
+        const { searchParams } = new URL(request.url);
         const categoryId = searchParams.get("categoryId") || undefined;
         const colorId = searchParams.get("colorId") || undefined;
         const sizeId = searchParams.get("sizeId") || undefined;
@@ -107,7 +107,7 @@ export async function GET(request, { params }) {
         }
 
 
-        const products = await prisma.billBoard.findMany({
+        const products = await prisma.product.findMany({
             where: {
                 storeId: params.storeId,
                 categoryId,

@@ -2,7 +2,7 @@ import prisma from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 
-export default async function SetupLayout({children}) {
+export default async function SetupLayout({ children }) {
 
     const { userId } = auth();
 
