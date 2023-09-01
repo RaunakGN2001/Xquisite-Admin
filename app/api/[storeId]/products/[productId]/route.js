@@ -48,7 +48,7 @@ export async function PATCH(request, { params }) {
         }
 
         if (!name) {
-            return new NextResponse("Label is required", { status: 400 });
+            return new NextResponse("Name is required", { status: 400 });
         }
 
         if (!price) {
